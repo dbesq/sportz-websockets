@@ -144,3 +144,5 @@ vite.config.ts.timestamp-*
 .vite/
 
 ZZNotes.txt
+websockets-output.md
+websockets-output.txt
