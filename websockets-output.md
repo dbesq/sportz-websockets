@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `websockets`
-- **Generated On**: 2026-02-15 07:56:43 (America/Chicago / GMT-06:00)
+- **Generated On**: 2026-02-15 08:21:27 (America/Chicago / GMT-06:00)
 - **Total Files Processed**: 12
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -30,7 +30,7 @@
 │   │   ├── 📄 db.js (316 B)
 │   │   └── 📄 schema.js (1.18 KB)
 │   ├── 📁 routes/
-│   │   └── 📄 matches.js (1.93 KB)
+│   │   └── 📄 matches.js (1.92 KB)
 │   ├── 📁 utils/
 │   │   └── 📄 match-status.js (851 B)
 │   ├── 📁 validation/
@@ -68,7 +68,7 @@
 | Total Directories | 7 |
 | Text Files | 12 |
 | Binary Files | 0 |
-| Total Size | 95.2 KB |
+| Total Size | 95.18 KB |
 
 ### 📄 File Types Distribution
 
@@ -490,15 +490,15 @@ export const commentary = pgTable('commentary', {
 ### <a id="📄-src-routes-matches-js"></a>📄 `src/routes/matches.js`
 
 **File Info:**
-- **Size**: 1.93 KB
+- **Size**: 1.92 KB
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `src/routes/matches.js`
 - **Relative Path**: `src/routes`
 - **Created**: 2026-02-14 09:05:23 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-15 07:56:42 (America/Chicago / GMT-06:00)
-- **MD5**: `057e54bafe793d08bcbaa08f285473ed`
-- **SHA256**: `50b5cac9144e23f0e279398a2744f76f547c8ca6e01e528fabb1b5ca99f9d6bc`
+- **Modified**: 2026-02-15 08:21:26 (America/Chicago / GMT-06:00)
+- **MD5**: `9d0ec400af90c2859ea2d7c285b01f0a`
+- **SHA256**: `d8d39a909048fff47a14459f94b7aa68cf4d4116f4084321ea532145799ef831`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -521,7 +521,7 @@ matchRouter.get('/', async (req, res) => {
     if(!parsed.success) {
         return res.status(400).json({
             error: 'Invalid query',
-            details: JSON.stringify(parsed.error)
+            details: parsed.error.issues
         })
     }
     
@@ -543,14 +543,15 @@ matchRouter.get('/', async (req, res) => {
 matchRouter.post('/', async (req, res) => {
     // Frontend sends over req.body
     const parsed = createMatchSchema.safeParse(req.body)
-    const { data: { startTime, endTime, homeScore, awayScore }} = parsed
 
     if(!parsed.success) {
         return res.status(400).json({
             error: 'Invalid payload',
-            details: JSON.stringify(parsed.error)
+            details: parsed.error.issues
         })
     }
+
+    const { data: { startTime, endTime, homeScore, awayScore }} = parsed
 
     try {
         // Insert into the matches table
@@ -637,7 +638,7 @@ export async function syncMatchStatus(match, updateStatus) {
 - **Location**: `src/validation/matches.js`
 - **Relative Path**: `src/validation`
 - **Created**: 2026-02-14 09:15:39 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 09:19:38 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-15 08:18:29 (America/Chicago / GMT-06:00)
 - **MD5**: `94ea9ab4027ab5f152fe56dd9cfb3d93`
 - **SHA256**: `249c1125f9eead4f9576cbca29d521b7be8b89972bec7f2b9ddf21af9b24d623`
 - **Encoding**: ASCII
