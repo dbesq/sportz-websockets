@@ -3,8 +3,8 @@
 ## 📊 Project Information
 
 - **Project Name**: `websockets`
-- **Generated On**: 2026-02-14 08:50:45 (America/Chicago / GMT-06:00)
-- **Total Files Processed**: 7
+- **Generated On**: 2026-02-15 07:56:43 (America/Chicago / GMT-06:00)
+- **Total Files Processed**: 12
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
 
@@ -21,16 +21,24 @@
 
 ```
 ├── 📁 drizzle/
-│   └── 📁 meta/
-│       └── 📄 _journal.json (51 B)
+│   ├── 📁 meta/
+│   │   ├── 📄 _journal.json (223 B)
+│   │   └── 📄 0000_snapshot.json (4.98 KB)
+│   └── 📄 0000_sweet_deathstrike.sql (1.02 KB)
 ├── 📁 src/
 │   ├── 📁 db/
 │   │   ├── 📄 db.js (316 B)
 │   │   └── 📄 schema.js (1.18 KB)
-│   └── 📄 index.js (342 B)
+│   ├── 📁 routes/
+│   │   └── 📄 matches.js (1.93 KB)
+│   ├── 📁 utils/
+│   │   └── 📄 match-status.js (851 B)
+│   ├── 📁 validation/
+│   │   └── 📄 matches.js (1.1 KB)
+│   └── 📄 index.js (429 B)
 ├── 📄 drizzle.config.js (349 B)
-├── 📄 package-lock.json (79.48 KB)
-└── 📄 package.json (586 B)
+├── 📄 package-lock.json (82.25 KB)
+└── 📄 package.json (635 B)
 ```
 
 ## 📑 Table of Contents
@@ -38,8 +46,13 @@
 **Project Files:**
 
 - [📄 drizzle/meta/_journal.json](#📄-drizzle-meta-journal-json)
+- [📄 drizzle/meta/0000_snapshot.json](#📄-drizzle-meta-0000-snapshot-json)
+- [📄 drizzle/0000_sweet_deathstrike.sql](#📄-drizzle-0000-sweet-deathstrike-sql)
 - [📄 src/db/db.js](#📄-src-db-db-js)
 - [📄 src/db/schema.js](#📄-src-db-schema-js)
+- [📄 src/routes/matches.js](#📄-src-routes-matches-js)
+- [📄 src/utils/match-status.js](#📄-src-utils-match-status-js)
+- [📄 src/validation/matches.js](#📄-src-validation-matches-js)
 - [📄 src/index.js](#📄-src-index-js)
 - [📄 drizzle.config.js](#📄-drizzle-config-js)
 - [📄 package-lock.json](#📄-package-lock-json)
@@ -51,39 +64,331 @@
 
 | Metric | Count |
 |--------|-------|
-| Total Files | 7 |
-| Total Directories | 4 |
-| Text Files | 7 |
+| Total Files | 12 |
+| Total Directories | 7 |
+| Text Files | 12 |
 | Binary Files | 0 |
-| Total Size | 82.27 KB |
+| Total Size | 95.2 KB |
 
 ### 📄 File Types Distribution
 
 | Extension | Count |
 |-----------|-------|
-| `.js` | 4 |
-| `.json` | 3 |
+| `.js` | 7 |
+| `.json` | 4 |
+| `.sql` | 1 |
 
 ## 💻 File Code Contents
 
 ### <a id="📄-drizzle-meta-journal-json"></a>📄 `drizzle/meta/_journal.json`
 
 **File Info:**
-- **Size**: 51 B
+- **Size**: 223 B
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `drizzle/meta/_journal.json`
 - **Relative Path**: `drizzle/meta`
-- **Created**: 2026-02-14 08:50:00 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 08:50:00 (America/Chicago / GMT-06:00)
-- **MD5**: `61b48b038b849db69ca93fccd798d70c`
-- **SHA256**: `b52519952bdce9dfa93d698a12c2a65930c947be8dbca741e6d7295d0e0ebb38`
+- **Created**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **MD5**: `cac8060d02049ca629a81004be166ba6`
+- **SHA256**: `af97631bebfc75e021f37f77acef74d215a3b13873ea9943709fba6d42b4a56b`
 - **Encoding**: ASCII
 
 **File code content:**
 
 ```json
-{"version":"7","dialect":"postgresql","entries":[]}
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1771059050324,
+      "tag": "0000_sweet_deathstrike",
+      "breakpoints": true
+    }
+  ]
+}
+```
+
+---
+
+### <a id="📄-drizzle-meta-0000-snapshot-json"></a>📄 `drizzle/meta/0000_snapshot.json`
+
+**File Info:**
+- **Size**: 4.98 KB
+- **Extension**: `.json`
+- **Language**: `json`
+- **Location**: `drizzle/meta/0000_snapshot.json`
+- **Relative Path**: `drizzle/meta`
+- **Created**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **MD5**: `a635934a1fc86917e89f8ef5db5a548e`
+- **SHA256**: `5b1dfed9d5547b0d5e4e2187d7f783c24d1fa7b87c3386963fde0fac9920cdfc`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```json
+{
+  "id": "12406757-e27d-4ebb-aacc-daa8121f9618",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.commentary": {
+      "name": "commentary",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "match_id": {
+          "name": "match_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "minute": {
+          "name": "minute",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sequence": {
+          "name": "sequence",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "period": {
+          "name": "period",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "event_type": {
+          "name": "event_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "actor": {
+          "name": "actor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "team": {
+          "name": "team",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "commentary_match_id_matches_id_fk": {
+          "name": "commentary_match_id_matches_id_fk",
+          "tableFrom": "commentary",
+          "tableTo": "matches",
+          "columnsFrom": [
+            "match_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.matches": {
+      "name": "matches",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sport": {
+          "name": "sport",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "home_team": {
+          "name": "home_team",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "away_team": {
+          "name": "away_team",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "match_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'scheduled'"
+        },
+        "start_time": {
+          "name": "start_time",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_time": {
+          "name": "end_time",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "home_score": {
+          "name": "home_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "away_score": {
+          "name": "away_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.match_status": {
+      "name": "match_status",
+      "schema": "public",
+      "values": [
+        "scheduled",
+        "live",
+        "finished"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
+```
+
+---
+
+### <a id="📄-drizzle-0000-sweet-deathstrike-sql"></a>📄 `drizzle/0000_sweet_deathstrike.sql`
+
+**File Info:**
+- **Size**: 1.02 KB
+- **Extension**: `.sql`
+- **Language**: `sql`
+- **Location**: `drizzle/0000_sweet_deathstrike.sql`
+- **Relative Path**: `drizzle`
+- **Created**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **MD5**: `c772d57570f9a8091d9c93625945f74f`
+- **SHA256**: `118552e5b664a9281902b77aea36a177f85a8cf46a927f7969e20c800e8584c8`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```sql
+CREATE TYPE "public"."match_status" AS ENUM('scheduled', 'live', 'finished');--> statement-breakpoint
+CREATE TABLE "commentary" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"match_id" integer NOT NULL,
+	"minute" integer,
+	"sequence" integer,
+	"period" text,
+	"event_type" text,
+	"actor" text,
+	"team" text,
+	"message" text NOT NULL,
+	"metadata" jsonb,
+	"tags" text[],
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "matches" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"sport" text NOT NULL,
+	"home_team" text NOT NULL,
+	"away_team" text NOT NULL,
+	"status" "match_status" DEFAULT 'scheduled' NOT NULL,
+	"start_time" timestamp,
+	"end_time" timestamp,
+	"home_score" integer DEFAULT 0 NOT NULL,
+	"away_score" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "commentary" ADD CONSTRAINT "commentary_match_id_matches_id_fk" FOREIGN KEY ("match_id") REFERENCES "public"."matches"("id") ON DELETE no action ON UPDATE no action;
 ```
 
 ---
@@ -96,8 +401,8 @@
 - **Language**: `javascript`
 - **Location**: `src/db/db.js`
 - **Relative Path**: `src/db`
-- **Created**: 2026-02-14 03:48:33 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 03:50:20 (America/Chicago / GMT-06:00)
+- **Created**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
 - **MD5**: `8a59cf25d00b43a2caa56fe1338a32c0`
 - **SHA256**: `b4f40a136d9ff351a3083fde84093e916c86ad23bc6e4ac8a7d11d4a48f509ac`
 - **Encoding**: ASCII
@@ -131,8 +436,8 @@ export const db = drizzle(pool);
 - **Language**: `javascript`
 - **Location**: `src/db/schema.js`
 - **Relative Path**: `src/db`
-- **Created**: 2026-02-14 03:48:33 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 08:50:45 (America/Chicago / GMT-06:00)
+- **Created**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
 - **MD5**: `aa3c7eaaab44952d70bd96258dc869c1`
 - **SHA256**: `372463aa45c32a1819ac7325105ec139ba7d0768ab6fd3001afa547b745ce3db`
 - **Encoding**: ASCII
@@ -182,24 +487,230 @@ export const commentary = pgTable('commentary', {
 
 ---
 
+### <a id="📄-src-routes-matches-js"></a>📄 `src/routes/matches.js`
+
+**File Info:**
+- **Size**: 1.93 KB
+- **Extension**: `.js`
+- **Language**: `javascript`
+- **Location**: `src/routes/matches.js`
+- **Relative Path**: `src/routes`
+- **Created**: 2026-02-14 09:05:23 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-15 07:56:42 (America/Chicago / GMT-06:00)
+- **MD5**: `057e54bafe793d08bcbaa08f285473ed`
+- **SHA256**: `50b5cac9144e23f0e279398a2744f76f547c8ca6e01e528fabb1b5ca99f9d6bc`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```javascript
+import { Router } from 'express'
+import { createMatchSchema, listMatchesQuerySchema } from '../validation/matches.js'
+import { matches } from '../db/schema.js'
+import { db } from '../db/db.js'
+import { getMatchStatus } from '../utils/match-status.js'
+import { desc } from 'drizzle-orm'
+
+export const matchRouter = Router()
+
+const MAX_LIMIT = 100
+
+matchRouter.get('/', async (req, res) => {
+    const parsed = listMatchesQuerySchema.safeParse(req.query)
+
+    if(!parsed.success) {
+        return res.status(400).json({
+            error: 'Invalid query',
+            details: JSON.stringify(parsed.error)
+        })
+    }
+    
+    const limit = Math.min(parsed.data.limit ?? 50, MAX_LIMIT)
+
+    try {
+        const data = await db
+            .select()
+            .from(matches)
+            .orderBy((desc(matches.createdAt)))
+            .limit(limit)
+
+        res.json({ data })
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to list matches.' })
+    }
+})
+
+matchRouter.post('/', async (req, res) => {
+    // Frontend sends over req.body
+    const parsed = createMatchSchema.safeParse(req.body)
+    const { data: { startTime, endTime, homeScore, awayScore }} = parsed
+
+    if(!parsed.success) {
+        return res.status(400).json({
+            error: 'Invalid payload',
+            details: JSON.stringify(parsed.error)
+        })
+    }
+
+    try {
+        // Insert into the matches table
+        const [event] = await db.insert(matches).values({
+            ...parsed.data,
+            awayScore: awayScore ?? 0,
+            endTime: new Date(endTime),
+            homeScore: homeScore ?? 0,
+            startTime: new Date(startTime),
+            status: getMatchStatus(startTime, endTime), 
+        }).returning()
+
+        res.status(201).json({ data: event })
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create match.', details: JSON.stringify(error) })
+    }
+})
+```
+
+---
+
+### <a id="📄-src-utils-match-status-js"></a>📄 `src/utils/match-status.js`
+
+**File Info:**
+- **Size**: 851 B
+- **Extension**: `.js`
+- **Language**: `javascript`
+- **Location**: `src/utils/match-status.js`
+- **Relative Path**: `src/utils`
+- **Created**: 2026-02-14 09:17:41 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:19:36 (America/Chicago / GMT-06:00)
+- **MD5**: `6bab420a882f77b41eb7bf438338b7fa`
+- **SHA256**: `905e4d1885caf591c03cbdb2de6a5b8a7b1cd26f52c7e3116c4f6945a20e506a`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```javascript
+import { MATCH_STATUS } from '../validation/matches.js'
+
+// Is match LIVE?
+// If before now, the match is SCHEDULED, if now is after the end, it is FINISHED
+export function getMatchStatus(startTime, endTime, now = new Date()) {
+	const start = new Date(startTime)
+	const end = new Date(endTime)
+
+	if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+		return null
+	}
+
+	if (now < start) {
+		return MATCH_STATUS.SCHEDULED
+	}
+
+	if (now >= end) {
+		return MATCH_STATUS.FINISHED
+	}
+
+	return MATCH_STATUS.LIVE
+}
+
+export async function syncMatchStatus(match, updateStatus) {
+	const nextStatus = getMatchStatus(match.startTime, match.endTime)
+	if (!nextStatus) {
+		return match.status
+	}
+	if (match.status !== nextStatus) {
+		await updateStatus(nextStatus)
+		match.status = nextStatus
+	}
+	return match.status
+}
+
+```
+
+---
+
+### <a id="📄-src-validation-matches-js"></a>📄 `src/validation/matches.js`
+
+**File Info:**
+- **Size**: 1.1 KB
+- **Extension**: `.js`
+- **Language**: `javascript`
+- **Location**: `src/validation/matches.js`
+- **Relative Path**: `src/validation`
+- **Created**: 2026-02-14 09:15:39 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:19:38 (America/Chicago / GMT-06:00)
+- **MD5**: `94ea9ab4027ab5f152fe56dd9cfb3d93`
+- **SHA256**: `249c1125f9eead4f9576cbca29d521b7be8b89972bec7f2b9ddf21af9b24d623`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```javascript
+import { z } from 'zod'
+
+export const MATCH_STATUS = {
+	SCHEDULED: 'scheduled',
+	LIVE: 'live',
+	FINISHED: 'finished',
+}
+
+export const listMatchesQuerySchema = z.object({
+	limit: z.coerce.number().int().positive().max(100).optional(),
+})
+
+export const matchIdParamSchema = z.object({
+	id: z.coerce.number().int().positive(),
+})
+
+export const createMatchSchema = z
+	.object({
+		sport: z.string().min(1),
+		homeTeam: z.string().min(1),
+		awayTeam: z.string().min(1),
+		startTime: z.iso.datetime(),
+		endTime: z.iso.datetime(),
+		homeScore: z.coerce.number().int().nonnegative().optional(),
+		awayScore: z.coerce.number().int().nonnegative().optional(),
+	})
+	.superRefine((data, ctx) => {
+		const start = new Date(data.startTime)
+		const end = new Date(data.endTime)
+		if (end <= start) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'endTime must be chronologically after startTime',
+				path: ['endTime'],
+			})
+		}
+	})
+
+export const updateScoreSchema = z.object({
+	homeScore: z.coerce.number().int().nonnegative(),
+	awayScore: z.coerce.number().int().nonnegative(),
+})
+
+```
+
+---
+
 ### <a id="📄-src-index-js"></a>📄 `src/index.js`
 
 **File Info:**
-- **Size**: 342 B
+- **Size**: 429 B
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `src/index.js`
 - **Relative Path**: `src`
 - **Created**: 2026-02-14 03:25:42 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 08:33:15 (America/Chicago / GMT-06:00)
-- **MD5**: `82c5eaa035e9ada1a6f24d7485e5ac60`
-- **SHA256**: `f8017280b0d81ce1cad854cdb31c0fcee737f49c7f5242e817a848e5d565865c`
+- **Modified**: 2026-02-14 09:12:23 (America/Chicago / GMT-06:00)
+- **MD5**: `6a1edf0706e1601d63dba195abeed93e`
+- **SHA256**: `58cdbe30dd1ca65893c049ab451269f37e9365010e10c2337ee35be3569f3dd9`
 - **Encoding**: ASCII
 
 **File code content:**
 
 ```javascript
 import express from 'express'
+import { matchRouter } from './routes/matches.js'
 
 const app = express()
 const PORT = 8000
@@ -211,6 +722,8 @@ app.use(express.json())
 app.get('/', (req, res) => {
 	res.json({ message: 'Welcome to the Express server!' })
 })
+
+app.use('/matches', matchRouter)
 
 // Start server
 app.listen(PORT, () => {
@@ -230,7 +743,7 @@ app.listen(PORT, () => {
 - **Location**: `drizzle.config.js`
 - **Relative Path**: `root`
 - **Created**: 2026-02-14 03:48:33 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 08:32:51 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-14 09:03:08 (America/Chicago / GMT-06:00)
 - **MD5**: `5efdfe1fd2a1c0fe6abfc96954dd438b`
 - **SHA256**: `4231005314de6e91524905f2bf5902fcc8b0513912021164343a2b79f86ceae4`
 - **Encoding**: ASCII
@@ -261,15 +774,15 @@ export default defineConfig({
 ### <a id="📄-package-lock-json"></a>📄 `package-lock.json`
 
 **File Info:**
-- **Size**: 79.48 KB
+- **Size**: 82.25 KB
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `package-lock.json`
 - **Relative Path**: `root`
 - **Created**: 2026-02-14 03:24:06 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 03:48:13 (America/Chicago / GMT-06:00)
-- **MD5**: `51014cd4d1380a71353efcec8d020bf9`
-- **SHA256**: `34ee767c28d39c7902e3e0d77fb0248391e81b6d1f3795c6fe04dffe27cd2093`
+- **Modified**: 2026-02-14 09:13:25 (America/Chicago / GMT-06:00)
+- **MD5**: `b10937a9abfd26e6ae52227d09bcb92e`
+- **SHA256**: `44ec970e73feccc00bf53ed77764b9597cf9fc07fad70234d8ddddf22bc01bb0`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -289,7 +802,8 @@ export default defineConfig({
         "dotenv": "^17.3.1",
         "drizzle-orm": "^0.45.1",
         "express": "^5.2.1",
-        "pg": "^8.18.0"
+        "pg": "^8.18.0",
+        "zod": "^4.3.6"
       },
       "devDependencies": {
         "drizzle-kit": "^0.31.9",
@@ -2745,6 +3259,14 @@ export default defineConfig({
       "engines": {
         "node": ">=0.4"
       }
+    },
+    "node_modules/zod": {
+      "version": "4.3.6",
+      "resolved": "https://registry.npmjs.org/zod/-/zod-4.3.6.tgz",
+      "integrity": "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==",
+      "funding": {
+        "url": "https://github.com/sponsors/colinhacks"
+      }
     }
   }
 }
@@ -2756,15 +3278,15 @@ export default defineConfig({
 ### <a id="📄-package-json"></a>📄 `package.json`
 
 **File Info:**
-- **Size**: 586 B
+- **Size**: 635 B
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `package.json`
 - **Relative Path**: `root`
 - **Created**: 2026-02-14 03:23:14 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 08:49:28 (America/Chicago / GMT-06:00)
-- **MD5**: `c2bce79f2deea10a741747a9de1e76cb`
-- **SHA256**: `0b49b2652843295e8d3b649b1176bd18ea023a91057ff07f3e8a4ff61e348ee4`
+- **Modified**: 2026-02-14 09:13:25 (America/Chicago / GMT-06:00)
+- **MD5**: `ad42a2edb11c77746a5be2c264ab7170`
+- **SHA256**: `cfe3fb58547216cb09c0bbb15fd653e6f48e9d8bb979f927a97787fd83bae336`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -2790,7 +3312,8 @@ export default defineConfig({
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
-    "pg": "^8.18.0"
+    "pg": "^8.18.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.9",
