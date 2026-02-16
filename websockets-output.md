@@ -3,8 +3,8 @@
 ## 📊 Project Information
 
 - **Project Name**: `websockets`
-- **Generated On**: 2026-02-15 08:21:27 (America/Chicago / GMT-06:00)
-- **Total Files Processed**: 12
+- **Generated On**: 2026-02-16 08:23:41 (America/Chicago / GMT-06:00)
+- **Total Files Processed**: 13
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
 
@@ -35,10 +35,12 @@
 │   │   └── 📄 match-status.js (851 B)
 │   ├── 📁 validation/
 │   │   └── 📄 matches.js (1.1 KB)
-│   └── 📄 index.js (429 B)
+│   ├── 📁 ws/
+│   │   └── 📄 server.js (1002 B)
+│   └── 📄 index.js (918 B)
 ├── 📄 drizzle.config.js (349 B)
-├── 📄 package-lock.json (82.25 KB)
-└── 📄 package.json (635 B)
+├── 📄 package-lock.json (82.85 KB)
+└── 📄 package.json (657 B)
 ```
 
 ## 📑 Table of Contents
@@ -53,6 +55,7 @@
 - [📄 src/routes/matches.js](#📄-src-routes-matches-js)
 - [📄 src/utils/match-status.js](#📄-src-utils-match-status-js)
 - [📄 src/validation/matches.js](#📄-src-validation-matches-js)
+- [📄 src/ws/server.js](#📄-src-ws-server-js)
 - [📄 src/index.js](#📄-src-index-js)
 - [📄 drizzle.config.js](#📄-drizzle-config-js)
 - [📄 package-lock.json](#📄-package-lock-json)
@@ -64,17 +67,17 @@
 
 | Metric | Count |
 |--------|-------|
-| Total Files | 12 |
-| Total Directories | 7 |
-| Text Files | 12 |
+| Total Files | 13 |
+| Total Directories | 8 |
+| Text Files | 13 |
 | Binary Files | 0 |
-| Total Size | 95.18 KB |
+| Total Size | 97.27 KB |
 
 ### 📄 File Types Distribution
 
 | Extension | Count |
 |-----------|-------|
-| `.js` | 7 |
+| `.js` | 8 |
 | `.json` | 4 |
 | `.sql` | 1 |
 
@@ -495,10 +498,10 @@ export const commentary = pgTable('commentary', {
 - **Language**: `javascript`
 - **Location**: `src/routes/matches.js`
 - **Relative Path**: `src/routes`
-- **Created**: 2026-02-14 09:05:23 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-15 08:21:26 (America/Chicago / GMT-06:00)
-- **MD5**: `9d0ec400af90c2859ea2d7c285b01f0a`
-- **SHA256**: `d8d39a909048fff47a14459f94b7aa68cf4d4116f4084321ea532145799ef831`
+- **Created**: 2026-02-15 08:25:30 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-16 08:23:41 (America/Chicago / GMT-06:00)
+- **MD5**: `b402b18ea17d90d3c0b8592ab7863a53`
+- **SHA256**: `a784923fe903416ba5aa71095fcb2b0db0c17235cbf035e11e28a525d8a3d283`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -541,32 +544,31 @@ matchRouter.get('/', async (req, res) => {
 })
 
 matchRouter.post('/', async (req, res) => {
-    // Frontend sends over req.body
-    const parsed = createMatchSchema.safeParse(req.body)
+    const parsed = createMatchSchema.safeParse(req.body);
 
     if(!parsed.success) {
-        return res.status(400).json({
-            error: 'Invalid payload',
-            details: parsed.error.issues
-        })
+        return res.status(400).json({ error: 'Invalid payload.', details: parsed.error.issues });
     }
 
-    const { data: { startTime, endTime, homeScore, awayScore }} = parsed
+    const { data: { startTime, endTime, homeScore, awayScore } } = parsed;
 
     try {
-        // Insert into the matches table
         const [event] = await db.insert(matches).values({
             ...parsed.data,
-            awayScore: awayScore ?? 0,
+            startTime: new Date(startTime),
             endTime: new Date(endTime),
             homeScore: homeScore ?? 0,
-            startTime: new Date(startTime),
-            status: getMatchStatus(startTime, endTime), 
-        }).returning()
+            awayScore: awayScore ?? 0,
+            status: getMatchStatus(startTime, endTime),
+        }).returning();
 
-        res.status(201).json({ data: event })
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to create match.', details: JSON.stringify(error) })
+        if(res.app.locals.broadcastMatchCreated) {
+            res.app.locals.broadcastMatchCreated(event);
+        }
+
+        res.status(201).json({ data: event });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to create match.', details: JSON.stringify(e) });
     }
 })
 ```
@@ -581,8 +583,8 @@ matchRouter.post('/', async (req, res) => {
 - **Language**: `javascript`
 - **Location**: `src/utils/match-status.js`
 - **Relative Path**: `src/utils`
-- **Created**: 2026-02-14 09:17:41 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 09:19:36 (America/Chicago / GMT-06:00)
+- **Created**: 2026-02-15 08:25:30 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-15 08:25:30 (America/Chicago / GMT-06:00)
 - **MD5**: `6bab420a882f77b41eb7bf438338b7fa`
 - **SHA256**: `905e4d1885caf591c03cbdb2de6a5b8a7b1cd26f52c7e3116c4f6945a20e506a`
 - **Encoding**: ASCII
@@ -637,8 +639,8 @@ export async function syncMatchStatus(match, updateStatus) {
 - **Language**: `javascript`
 - **Location**: `src/validation/matches.js`
 - **Relative Path**: `src/validation`
-- **Created**: 2026-02-14 09:15:39 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-15 08:18:29 (America/Chicago / GMT-06:00)
+- **Created**: 2026-02-15 08:25:30 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-15 08:25:30 (America/Chicago / GMT-06:00)
 - **MD5**: `94ea9ab4027ab5f152fe56dd9cfb3d93`
 - **SHA256**: `249c1125f9eead4f9576cbca29d521b7be8b89972bec7f2b9ddf21af9b24d623`
 - **Encoding**: ASCII
@@ -693,28 +695,94 @@ export const updateScoreSchema = z.object({
 
 ---
 
+### <a id="📄-src-ws-server-js"></a>📄 `src/ws/server.js`
+
+**File Info:**
+- **Size**: 1002 B
+- **Extension**: `.js`
+- **Language**: `javascript`
+- **Location**: `src/ws/server.js`
+- **Relative Path**: `src/ws`
+- **Created**: 2026-02-15 08:31:30 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-16 08:17:27 (America/Chicago / GMT-06:00)
+- **MD5**: `91e67e560b695f9ee1af91f13d83b34e`
+- **SHA256**: `6bb6d59c9febf8066a79a53cd35482c48bc62bd408b9df4b15c1d314dd8b8a37`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```javascript
+
+import { WebSocket, WebSocketServer } from 'ws'
+
+function sendJson(socket, payload) {
+    if(socket.readyState !== WebSocket.OPEN) return;
+
+    socket.send(JSON.stringify(payload));
+}
+
+function broadcast(wss, payload) {
+    for (const client of wss.clients)  {
+        if(client.readyState !== WebSocket.OPEN) continue;
+
+        client.send(JSON.stringify(payload));
+    }
+}
+
+export function attachWebSocketServer(server) {
+    const wss = new WebSocketServer({
+        server,  // attach wss to express server
+        path: '/ws',  // Separate websocket from other info
+        maxPayload: 1024 * 1024, // 1MB
+    })
+
+    wss.on('connection', (socket) => {
+        sendJson(socket, { type: 'welcome' })
+
+        socket.on('error', console.error)
+    })
+
+    // Broadcast match_created events to entire app
+    function broadcastMatchCreated(match) {
+        broadcast(wss, { type: 'match_created', data: match })
+    }
+
+    return { broadcastMatchCreated }
+}
+
+
+
+```
+
+---
+
 ### <a id="📄-src-index-js"></a>📄 `src/index.js`
 
 **File Info:**
-- **Size**: 429 B
+- **Size**: 918 B
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `src/index.js`
 - **Relative Path**: `src`
 - **Created**: 2026-02-14 03:25:42 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 09:12:23 (America/Chicago / GMT-06:00)
-- **MD5**: `6a1edf0706e1601d63dba195abeed93e`
-- **SHA256**: `58cdbe30dd1ca65893c049ab451269f37e9365010e10c2337ee35be3569f3dd9`
+- **Modified**: 2026-02-15 08:57:21 (America/Chicago / GMT-06:00)
+- **MD5**: `dc8954e27107997cde625025bd16d95d`
+- **SHA256**: `8bd2a3ae84360a6db1e8ef0535b11073699c2ff236c8942f0ea2a672155c2738`
 - **Encoding**: ASCII
 
 **File code content:**
 
 ```javascript
 import express from 'express'
+import http from 'http' 
 import { matchRouter } from './routes/matches.js'
+import { attachWebSocketServer } from './ws/server.js'
+
+const PORT = Number(process.env.PORT || 8000)
+const HOST = process.env.HOST || '0.0.0.0'
 
 const app = express()
-const PORT = 8000
+const server = http.createServer(app)
 
 // Middleware
 app.use(express.json())
@@ -726,9 +794,14 @@ app.get('/', (req, res) => {
 
 app.use('/matches', matchRouter)
 
+const { broadcastMatchCreated } = attachWebSocketServer(server)
+app.locals.broadcastMatchCreated = broadcastMatchCreated
+
 // Start server
-app.listen(PORT, () => {
-	console.log(`Server is running at http://localhost:${PORT}`)
+server.listen(PORT, HOST, () => {
+	const baseUrl = HOST === '0.0.0.0' ? `http://localhost:${PORT}` : `http://${HOST}:${PORT}`
+	console.log(`Server is running ${baseUrl}`)
+	console.log(`Websocket server is running on ${baseUrl.replace('http', 'ws')}/ws`)
 })
 
 ```
@@ -775,15 +848,15 @@ export default defineConfig({
 ### <a id="📄-package-lock-json"></a>📄 `package-lock.json`
 
 **File Info:**
-- **Size**: 82.25 KB
+- **Size**: 82.85 KB
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `package-lock.json`
 - **Relative Path**: `root`
 - **Created**: 2026-02-14 03:24:06 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 09:13:25 (America/Chicago / GMT-06:00)
-- **MD5**: `b10937a9abfd26e6ae52227d09bcb92e`
-- **SHA256**: `44ec970e73feccc00bf53ed77764b9597cf9fc07fad70234d8ddddf22bc01bb0`
+- **Modified**: 2026-02-15 08:31:08 (America/Chicago / GMT-06:00)
+- **MD5**: `66c2beaeec72c47eef55d4e7179207fc`
+- **SHA256**: `f68d70731ed82890c45c5b8234a9c02dbd34ffb8d7ab64a447cc5de0196ac0cc`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -804,6 +877,7 @@ export default defineConfig({
         "drizzle-orm": "^0.45.1",
         "express": "^5.2.1",
         "pg": "^8.18.0",
+        "ws": "^8.19.0",
         "zod": "^4.3.6"
       },
       "devDependencies": {
@@ -3253,6 +3327,26 @@ export default defineConfig({
       "resolved": "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz",
       "integrity": "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="
     },
+    "node_modules/ws": {
+      "version": "8.19.0",
+      "resolved": "https://registry.npmjs.org/ws/-/ws-8.19.0.tgz",
+      "integrity": "sha512-blAT2mjOEIi0ZzruJfIhb3nps74PRWTCz1IjglWEEpQl5XS/UNama6u2/rjFkDDouqr4L67ry+1aGIALViWjDg==",
+      "engines": {
+        "node": ">=10.0.0"
+      },
+      "peerDependencies": {
+        "bufferutil": "^4.0.1",
+        "utf-8-validate": ">=5.0.2"
+      },
+      "peerDependenciesMeta": {
+        "bufferutil": {
+          "optional": true
+        },
+        "utf-8-validate": {
+          "optional": true
+        }
+      }
+    },
     "node_modules/xtend": {
       "version": "4.0.2",
       "resolved": "https://registry.npmjs.org/xtend/-/xtend-4.0.2.tgz",
@@ -3279,15 +3373,15 @@ export default defineConfig({
 ### <a id="📄-package-json"></a>📄 `package.json`
 
 **File Info:**
-- **Size**: 635 B
+- **Size**: 657 B
 - **Extension**: `.json`
 - **Language**: `json`
 - **Location**: `package.json`
 - **Relative Path**: `root`
 - **Created**: 2026-02-14 03:23:14 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-14 09:13:25 (America/Chicago / GMT-06:00)
-- **MD5**: `ad42a2edb11c77746a5be2c264ab7170`
-- **SHA256**: `cfe3fb58547216cb09c0bbb15fd653e6f48e9d8bb979f927a97787fd83bae336`
+- **Modified**: 2026-02-15 08:31:08 (America/Chicago / GMT-06:00)
+- **MD5**: `b5bb5d7128047a79488b8b9d9a321d66`
+- **SHA256**: `4d4d6f74e45dfa428d18f28a11fec8f7307c64a6f1f38468f774c50e0a79c0ba`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -3314,6 +3408,7 @@ export default defineConfig({
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
     "pg": "^8.18.0",
+    "ws": "^8.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
