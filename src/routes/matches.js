@@ -35,31 +35,30 @@ matchRouter.get('/', async (req, res) => {
 })
 
 matchRouter.post('/', async (req, res) => {
-    // Frontend sends over req.body
-    const parsed = createMatchSchema.safeParse(req.body)
+    const parsed = createMatchSchema.safeParse(req.body);
 
     if(!parsed.success) {
-        return res.status(400).json({
-            error: 'Invalid payload',
-            details: parsed.error.issues
-        })
+        return res.status(400).json({ error: 'Invalid payload.', details: parsed.error.issues });
     }
 
-    const { data: { startTime, endTime, homeScore, awayScore }} = parsed
+    const { data: { startTime, endTime, homeScore, awayScore } } = parsed;
 
     try {
-        // Insert into the matches table
         const [event] = await db.insert(matches).values({
             ...parsed.data,
-            awayScore: awayScore ?? 0,
+            startTime: new Date(startTime),
             endTime: new Date(endTime),
             homeScore: homeScore ?? 0,
-            startTime: new Date(startTime),
-            status: getMatchStatus(startTime, endTime), 
-        }).returning()
+            awayScore: awayScore ?? 0,
+            status: getMatchStatus(startTime, endTime),
+        }).returning();
 
-        res.status(201).json({ data: event })
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to create match.', details: JSON.stringify(error) })
+        if(res.app.locals.broadcastMatchCreated) {
+            res.app.locals.broadcastMatchCreated(event);
+        }
+
+        res.status(201).json({ data: event });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to create match.', details: JSON.stringify(e) });
     }
 })
