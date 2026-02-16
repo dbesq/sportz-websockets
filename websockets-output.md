@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `websockets`
-- **Generated On**: 2026-02-16 08:23:41 (America/Chicago / GMT-06:00)
+- **Generated On**: 2026-02-16 08:41:14 (America/Chicago / GMT-06:00)
 - **Total Files Processed**: 13
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -36,7 +36,7 @@
 │   ├── 📁 validation/
 │   │   └── 📄 matches.js (1.1 KB)
 │   ├── 📁 ws/
-│   │   └── 📄 server.js (1002 B)
+│   │   └── 📄 server.js (1.53 KB)
 │   └── 📄 index.js (918 B)
 ├── 📄 drizzle.config.js (349 B)
 ├── 📄 package-lock.json (82.85 KB)
@@ -71,7 +71,7 @@
 | Total Directories | 8 |
 | Text Files | 13 |
 | Binary Files | 0 |
-| Total Size | 97.27 KB |
+| Total Size | 97.82 KB |
 
 ### 📄 File Types Distribution
 
@@ -698,15 +698,15 @@ export const updateScoreSchema = z.object({
 ### <a id="📄-src-ws-server-js"></a>📄 `src/ws/server.js`
 
 **File Info:**
-- **Size**: 1002 B
+- **Size**: 1.53 KB
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `src/ws/server.js`
 - **Relative Path**: `src/ws`
 - **Created**: 2026-02-15 08:31:30 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-16 08:17:27 (America/Chicago / GMT-06:00)
-- **MD5**: `91e67e560b695f9ee1af91f13d83b34e`
-- **SHA256**: `6bb6d59c9febf8066a79a53cd35482c48bc62bd408b9df4b15c1d314dd8b8a37`
+- **Modified**: 2026-02-16 08:41:13 (America/Chicago / GMT-06:00)
+- **MD5**: `9f44d6312089926f4ec5390b9ae7e45d`
+- **SHA256**: `69007a9a3d40a55f22ea65e8062368391f635e92c90d43d1cc12ff424dd24e5a`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -723,7 +723,7 @@ function sendJson(socket, payload) {
 
 function broadcast(wss, payload) {
     for (const client of wss.clients)  {
-        if(client.readyState !== WebSocket.OPEN) continue;
+        if(client.readyState !== WebSocket.OPEN) continue;  // Use continue to skip clients not open
 
         client.send(JSON.stringify(payload));
     }
@@ -737,18 +737,33 @@ export function attachWebSocketServer(server) {
     })
 
     wss.on('connection', (socket) => {
+        socket.isAlive = true  // Attach isAlive to socket
+        socket.on('pong', () => { socket.isAlive = true })  // Confirm isAlive still true
+
         sendJson(socket, { type: 'welcome' })
 
         socket.on('error', console.error)
     })
 
-    // Broadcast match_created events to entire app
-    function broadcastMatchCreated(match) {
-        broadcast(wss, { type: 'match_created', data: match })
-    }
+    const interval = setInterval(() => {
+        wss.clients.forEach((ws) => {
+            if(ws.isAlive === false) return ws.terminate()
+                ws.isAlive = false
+                ws.ping()  // Ping it and if it does not respond w/i interval, it dies
+    })}, 30000)
+
+        wss.on('close', () => clearInterval(interval))
+
+        // Broadcast match_created events to entire app
+        function broadcastMatchCreated(match) {
+            broadcast(wss, { type: 'match_created', data: match })
+        }
 
     return { broadcastMatchCreated }
 }
+    
+
+
 
 
 
