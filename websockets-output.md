@@ -3,8 +3,8 @@
 ## 📊 Project Information
 
 - **Project Name**: `websockets`
-- **Generated On**: 2026-02-17 08:52:51 (America/Chicago / GMT-06:00)
-- **Total Files Processed**: 14
+- **Generated On**: 2026-02-21 08:14:55 (America/Chicago / GMT-06:00)
+- **Total Files Processed**: 16
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
 
@@ -30,15 +30,17 @@
 │   │   ├── 📄 db.js (316 B)
 │   │   └── 📄 schema.js (1.18 KB)
 │   ├── 📁 routes/
+│   │   ├── 📄 commentary.js (2.35 KB)
 │   │   └── 📄 matches.js (1.92 KB)
 │   ├── 📁 utils/
 │   │   └── 📄 match-status.js (851 B)
 │   ├── 📁 validation/
+│   │   ├── 📄 commentary.js (583 B)
 │   │   └── 📄 matches.js (1.1 KB)
 │   ├── 📁 ws/
-│   │   └── 📄 server.js (2.32 KB)
+│   │   └── 📄 server.js (4.78 KB)
 │   ├── 📄 arcjet.js (2.02 KB)
-│   └── 📄 index.js (1.02 KB)
+│   └── 📄 index.js (1.21 KB)
 ├── 📄 drizzle.config.js (349 B)
 ├── 📄 package-lock.json (91.86 KB)
 └── 📄 package.json (722 B)
@@ -53,8 +55,10 @@
 - [📄 drizzle/0000_sweet_deathstrike.sql](#📄-drizzle-0000-sweet-deathstrike-sql)
 - [📄 src/db/db.js](#📄-src-db-db-js)
 - [📄 src/db/schema.js](#📄-src-db-schema-js)
+- [📄 src/routes/commentary.js](#📄-src-routes-commentary-js)
 - [📄 src/routes/matches.js](#📄-src-routes-matches-js)
 - [📄 src/utils/match-status.js](#📄-src-utils-match-status-js)
+- [📄 src/validation/commentary.js](#📄-src-validation-commentary-js)
 - [📄 src/validation/matches.js](#📄-src-validation-matches-js)
 - [📄 src/ws/server.js](#📄-src-ws-server-js)
 - [📄 src/arcjet.js](#📄-src-arcjet-js)
@@ -69,17 +73,17 @@
 
 | Metric | Count |
 |--------|-------|
-| Total Files | 14 |
+| Total Files | 16 |
 | Total Directories | 8 |
-| Text Files | 14 |
+| Text Files | 16 |
 | Binary Files | 0 |
-| Total Size | 109.83 KB |
+| Total Size | 115.39 KB |
 
 ### 📄 File Types Distribution
 
 | Extension | Count |
 |-----------|-------|
-| `.js` | 9 |
+| `.js` | 11 |
 | `.json` | 4 |
 | `.sql` | 1 |
 
@@ -492,6 +496,117 @@ export const commentary = pgTable('commentary', {
 
 ---
 
+### <a id="📄-src-routes-commentary-js"></a>📄 `src/routes/commentary.js`
+
+**File Info:**
+- **Size**: 2.35 KB
+- **Extension**: `.js`
+- **Language**: `javascript`
+- **Location**: `src/routes/commentary.js`
+- **Relative Path**: `src/routes`
+- **Created**: 2026-02-18 07:47:30 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-21 08:09:50 (America/Chicago / GMT-06:00)
+- **MD5**: `9da063fb17e925f61a51f1b48f82080a`
+- **SHA256**: `9dbf8ed464ca86782457d3f3ee7d504d7f193ff05d01d3491ede5a05c56ce455`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```javascript
+import { Router } from 'express'
+import { matchIdParamSchema } from '../validation/matches.js'
+import { createCommentarySchema, listCommentaryQuerySchema } from '../validation/commentary.js'
+import { commentary } from '../db/schema.js'
+import { db } from '../db/db.js'
+import { desc, eq } from 'drizzle-orm'
+
+export const commentaryRouter = Router({ mergeParams: true })
+
+const MAX_LIMIT = 100
+
+commentaryRouter.get('/', async (req, res) => {
+	const paramsResult = matchIdParamSchema.safeParse(req.params)
+
+	if (!paramsResult.success) {
+		return res.status(400).json({
+			error: 'Invalid match ID.',
+			details: paramsResult.error.issues,
+		})
+	}
+
+	const queryResult = listCommentaryQuerySchema.safeParse(req.query)
+
+	if (!queryResult.success) {
+		return res.status(400).json({
+			error: 'Invalid query parameters.',
+			details: queryResult.error.issues,
+		})
+	}
+
+	const limit = Math.min(queryResult.data.limit ?? MAX_LIMIT, MAX_LIMIT)
+
+	try {
+		const data = await db
+			.select()
+			.from(commentary)
+			.where(eq(commentary.matchId, paramsResult.data.id))
+			.orderBy(desc(commentary.createdAt))
+			.limit(limit)
+
+		res.json({ data })
+	} catch (error) {
+		console.error('Failed to list commentary')
+		console.error(error)
+		res.status(500).json({ error: 'Failed to list commentary.' })
+	}
+})
+
+commentaryRouter.post('/', async (req, res) => {
+	const paramsResult = matchIdParamSchema.safeParse(req.params)
+
+	if (!paramsResult.success) {
+		return res.status(400).json({
+			error: 'Invalid match ID.',
+			details: paramsResult.error.issues,
+		})
+	}
+
+	const bodyResult = createCommentarySchema.safeParse(req.body)
+
+	if (!bodyResult.success) {
+		return res.status(400).json({
+			error: 'Invalid commentary payload.',
+			details: bodyResult.error.issues,
+		})
+	}
+
+	try {
+        const { minute, ...rest } = bodyResult.data
+		const [ result ] = await db
+			.insert(commentary)
+			.values({
+				matchId: paramsResult.data.id,
+                minute,
+                ...rest
+			})
+			.returning()
+
+		if(res.app.locals.broadcastCommentary) {
+			res.app.locals.broadcastCommentary(result.matchId, result)
+		}
+
+		res.status(201).json({ data: result })
+	} catch (error) {
+        console.error('Failed to create commentary')
+        console.error(error)
+		res.status(500).json({ error: 'Failed to create commentary.' })
+	}
+})
+
+```
+
+---
+
 ### <a id="📄-src-routes-matches-js"></a>📄 `src/routes/matches.js`
 
 **File Info:**
@@ -633,6 +748,45 @@ export async function syncMatchStatus(match, updateStatus) {
 
 ---
 
+### <a id="📄-src-validation-commentary-js"></a>📄 `src/validation/commentary.js`
+
+**File Info:**
+- **Size**: 583 B
+- **Extension**: `.js`
+- **Language**: `javascript`
+- **Location**: `src/validation/commentary.js`
+- **Relative Path**: `src/validation`
+- **Created**: 2026-02-18 07:27:49 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-18 07:27:49 (America/Chicago / GMT-06:00)
+- **MD5**: `6804be2a36fd1c90fc439ef95956ba05`
+- **SHA256**: `81321b2ba70f0e43a0b688bbed8fc1106a9237f1b01d5f4264154c82ad5fc58b`
+- **Encoding**: ASCII
+
+**File code content:**
+
+```javascript
+import { z } from 'zod'
+
+export const listCommentaryQuerySchema = z.object({
+	limit: z.coerce.number().int().positive().max(100).optional(),
+})
+
+export const createCommentarySchema = z.object({
+	minute: z.coerce.number().int().nonnegative().optional(),
+	sequence: z.coerce.number().int().nonnegative().optional(),
+	period: z.string().optional(),
+	eventType: z.string().optional(),
+	actor: z.string().optional(),
+	team: z.string().optional(),
+	message: z.string().min(1),
+	metadata: z.record(z.string(), z.any()).optional(),
+	tags: z.array(z.string()).optional(),
+})
+
+```
+
+---
+
 ### <a id="📄-src-validation-matches-js"></a>📄 `src/validation/matches.js`
 
 **File Info:**
@@ -700,15 +854,15 @@ export const updateScoreSchema = z.object({
 ### <a id="📄-src-ws-server-js"></a>📄 `src/ws/server.js`
 
 **File Info:**
-- **Size**: 2.32 KB
+- **Size**: 4.78 KB
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `src/ws/server.js`
 - **Relative Path**: `src/ws`
 - **Created**: 2026-02-17 08:48:44 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-17 08:52:05 (America/Chicago / GMT-06:00)
-- **MD5**: `3c86df36cee0da0279e755cfc32e3d43`
-- **SHA256**: `2fe3f1f7296bfb8febf310fafc23c8065e17f896e651e3ba422cc7101df5beaa`
+- **Modified**: 2026-02-21 08:14:54 (America/Chicago / GMT-06:00)
+- **MD5**: `99c4eb36a60c6feae722ccb9e6871cf2`
+- **SHA256**: `29644d2040500bc130e88f5f0ffb491d55dddda267124cef0cb379b8ccc5d7f8`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -718,13 +872,41 @@ export const updateScoreSchema = z.object({
 import { WebSocket, WebSocketServer } from 'ws'
 import { wsArcjet } from '../arcjet.js';
 
+const matchSubscribers = new Map()
+
+function subscribe(matchId, socket) {
+    if(!matchSubscribers.has(matchId)) {
+        matchSubscribers.set(matchId, new Set())
+    }
+
+    matchSubscribers.get(matchId).add(socket)
+}
+
+function unsubsubscribe(matchId, socket) {
+    const subscribers = matchSubscribers.get(matchId)
+    
+    if(!subscribers) return
+
+    subscribers.delete(socket)
+
+    if(subscribers.size === 0) {
+        matchSubscribers.delete(matchId)
+    }
+}
+
+function cleanupSubscriptions(socket) {
+    for(const matchId of socket.subscriptions) {
+        unsubsubscribe(matchId, socket)
+    }
+}
+
 function sendJson(socket, payload) {
     if(socket.readyState !== WebSocket.OPEN) return;
 
     socket.send(JSON.stringify(payload));
 }
 
-function broadcast(wss, payload) {
+function broadcastToAll(wss, payload) {
     for (const client of wss.clients)  {
         if(client.readyState !== WebSocket.OPEN) continue;  // Use continue to skip clients not open
 
@@ -732,59 +914,126 @@ function broadcast(wss, payload) {
     }
 }
 
+// Send data to people interested in a match
+function broadcastToMatch(matchId, payload) {
+    const subscribers = matchSubscribers.get(matchId)
+
+    if(!subscribers || subscribers.size === 0) return
+
+    const message = JSON.stringify(payload)
+
+    for(const client of subscribers) {
+        if(client.readyState === WebSocket.OPEN) {
+            client.send(message)
+        }
+    }
+}
+
+function handleMessage(socket, data) {
+    let message
+
+    try {
+        message = JSON.parse(data.toString())
+    } catch (error) {
+        console.error('handleMessage error')
+        console.error(error)
+        sendJson(socket, { type: 'error', message: 'Invalid JSON' })
+    }
+
+    if(message?.type === 'subscribe' && Number.isInteger(message.matchId)) {
+        subscribe(message.matchId, socket)
+        socket.subscriptions.add(message.matchId)
+        sendJson(socket, { type: 'subscribed', matchId: message.matchId })
+        return
+    }
+
+    if(message?.type === 'unsubscribe' && Number.isInteger(message.matchId)) {
+        unsubsubscribe(message.matchId, socket)
+        socket.subscriptions.delete(message.matchId)
+        sendJson(socket, { type: 'unsubscribed', matchId: message.matchId })
+    }
+}
+
 export function attachWebSocketServer(server) {
-    const wss = new WebSocketServer({
-        server,  // attach wss to express server
-        path: '/ws',  // Separate websocket from other info
-        maxPayload: 1024 * 1024, // 1MB
-    })
+    const wss = new WebSocketServer({ noServer: true, path: '/ws', maxPayload: 1024 * 1024 });
+
+    server.on('upgrade', async (req, socket, head) => {
+        const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+
+        if (pathname !== '/ws') {
+            return;
+        }
+
+        // if (wsArcjet) {
+        //     try {
+        //         const decision = await wsArcjet.protect(req);
+
+        //         if (decision.isDenied()) {
+        //             if (decision.reason.isRateLimit()) {
+        //                 socket.write('HTTP/1.1 429 Too Many Requests\r\n\r\n');
+        //             } else {
+        //                 socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+        //             }
+        //             socket.destroy();
+        //             return;
+        //         }
+        //     } catch (e) {
+        //         console.error('WS upgrade protection error', e);
+        //         socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
+        //         socket.destroy();
+        //         return;
+        //     }
+        // }
+
+        wss.handleUpgrade(req, socket, head, (ws) => {
+            wss.emit('connection', ws, req);
+        });
+    });
 
     wss.on('connection', async (socket, req) => {
-        // Implement Arcjet security
-        if(wsArcjet) {
-            try {
-                const decision = await wsArcjet.protect(req)
+        socket.isAlive = true;
+        socket.on('pong', () => { socket.isAlive = true; });
 
-                if(decision.isDenied()) {
-                    const code = decision.reason.isRateLimit() ? 1013 : 1008 // Error codes, rate limit or policy violation
-                    const reason = decision.reason.isRateLimit() ? 'Rate limit exceeded' : 'Access denied'
-                    socket.close(code, reason)
-                    return
-                }
-            } catch (error) {
-                console.error('WS connection error')
-                console.error(error)
-                socket.close(1011, "Server security error")
-                return
-            }
-        } 
+        // Attach new set to socket object
+        socket.subscriptions = new Set()
 
+        sendJson(socket, { type: 'welcome' });
 
-        socket.isAlive = true  // Attach isAlive to socket
-        socket.on('pong', () => { socket.isAlive = true })  // Confirm isAlive still true
+        socket.on('message', (data) => {
+            handleMessage(socket, data);
+        });
 
-        sendJson(socket, { type: 'welcome' })
+        socket.on('error', () => {
+            socket.terminate();
+        });
 
-        socket.on('error', console.error)
-    })
+        socket.on('close', () => {
+            cleanupSubscriptions(socket);
+        })
+
+        socket.on('error', console.error);
+    });
 
     const interval = setInterval(() => {
         wss.clients.forEach((ws) => {
-            if(ws.isAlive === false) return ws.terminate()
-                ws.isAlive = false
-                ws.ping()  // Ping it and if it does not respond w/i interval, it dies
-    })}, 30000)
+            if (ws.isAlive === false) return ws.terminate();
 
-        wss.on('close', () => clearInterval(interval))
+            ws.isAlive = false;
+            ws.ping();
+        })}, 30000);
 
-        // Broadcast match_created events to entire app
-        function broadcastMatchCreated(match) {
-            broadcast(wss, { type: 'match_created', data: match })
-        }
+    wss.on('close', () => clearInterval(interval));
 
-    return { broadcastMatchCreated }
-}
-    
+    function broadcastMatchCreated(match) {
+        broadcastToAll(wss, { type: 'match_created', data: match });
+    }
+
+    function broadcastCommentary(matchId, comment) {
+        broadcastToMatch(matchId, { type: 'commentary', data: comment });
+    }
+
+    return { broadcastMatchCreated, broadcastCommentary };
+}  
 
 
 
@@ -802,8 +1051,8 @@ export function attachWebSocketServer(server) {
 - **Language**: `javascript`
 - **Location**: `src/arcjet.js`
 - **Relative Path**: `src`
-- **Created**: 2026-02-17 07:59:17 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-17 08:50:34 (America/Chicago / GMT-06:00)
+- **Created**: 2026-02-18 07:12:21 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-18 07:12:21 (America/Chicago / GMT-06:00)
 - **MD5**: `5d637c80e04fa8fbd0cc4195303c5dcd`
 - **SHA256**: `b0867449e6da158c37ce314805ac6ee31420ba5d41d8353eaae6e2ad1fef9c32`
 - **Encoding**: ASCII
@@ -874,15 +1123,15 @@ export function securityMiddleware() {
 ### <a id="📄-src-index-js"></a>📄 `src/index.js`
 
 **File Info:**
-- **Size**: 1.02 KB
+- **Size**: 1.21 KB
 - **Extension**: `.js`
 - **Language**: `javascript`
 - **Location**: `src/index.js`
 - **Relative Path**: `src`
-- **Created**: 2026-02-14 03:25:42 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-17 08:44:02 (America/Chicago / GMT-06:00)
-- **MD5**: `82953108c0a312dfe6351cc09d49b1df`
-- **SHA256**: `fdf3414b97d0e0cafcce1d5143204ad206f79b1dfed129c0c6b0e5c3afe8eca8`
+- **Created**: 2026-02-18 07:33:30 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-19 08:31:19 (America/Chicago / GMT-06:00)
+- **MD5**: `b9ed6da34223f508fdb62bb44b973d6c`
+- **SHA256**: `0305733d2c34586264ea049892daded80039fc2d65d2ba84abd1856abc73da31`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -894,6 +1143,7 @@ import http from 'http'
 import { matchRouter } from './routes/matches.js'
 import { attachWebSocketServer } from './ws/server.js'
 import { securityMiddleware } from './arcjet.js'
+import { commentaryRouter } from './routes/commentary.js'
 
 const PORT = Number(process.env.PORT || 8000)
 const HOST = process.env.HOST || '0.0.0.0'
@@ -910,12 +1160,14 @@ app.get('/', (req, res) => {
 })
 
 // Arcjet middleware
-app.use(securityMiddleware())
+// app.use(securityMiddleware())
 
 app.use('/matches', matchRouter)
+app.use('/matches/:id/commentary', commentaryRouter)
 
-const { broadcastMatchCreated } = attachWebSocketServer(server)
+const { broadcastMatchCreated, broadcastCommentary } = attachWebSocketServer(server)
 app.locals.broadcastMatchCreated = broadcastMatchCreated
+app.locals.broadcastCommentary = broadcastCommentary
 
 // Start server
 server.listen(PORT, HOST, () => {
@@ -974,7 +1226,7 @@ export default defineConfig({
 - **Location**: `package-lock.json`
 - **Relative Path**: `root`
 - **Created**: 2026-02-14 03:24:06 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-17 07:59:10 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-18 07:12:21 (America/Chicago / GMT-06:00)
 - **MD5**: `19d3d1e91b7ab20aa26087a2807fc1a0`
 - **SHA256**: `8e9e59c9174cd531efa9929886a1362b44cf7886ba172f90cbb54829fb50113b`
 - **Encoding**: ASCII
@@ -3732,7 +3984,7 @@ export default defineConfig({
 - **Location**: `package.json`
 - **Relative Path**: `root`
 - **Created**: 2026-02-14 03:23:14 (America/Chicago / GMT-06:00)
-- **Modified**: 2026-02-17 07:59:10 (America/Chicago / GMT-06:00)
+- **Modified**: 2026-02-18 07:12:21 (America/Chicago / GMT-06:00)
 - **MD5**: `610b0a3a36cafe6d656158b42db04dfe`
 - **SHA256**: `d14a06c6030df7cc6a66e99467cbb8a9f557e8f7f4737eefc898d806bedc935b`
 - **Encoding**: ASCII
